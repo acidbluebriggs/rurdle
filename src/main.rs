@@ -14,12 +14,17 @@ const RESET: &str = "\x1b[0m";
 const ROWS: usize  = 6;
 const CELLS: usize  = 5;
 
+
 #[derive(PartialEq)]
 enum CellState {
     CorrectPosition,
     IncorrectPosition,
     Invalid,
     Empty,
+}
+
+struct Keyboard {
+
 }
 
 struct Cell {
@@ -68,12 +73,12 @@ impl Grid {
     fn print_char(letter: &str, state: &CellState) {
         match state {
             CellState::CorrectPosition => {
-                print!("{} {} {}", GREEN, letter.to_ascii_uppercase(), RESET)
+                print!("{} {} {}", GREEN, letter, RESET)
             }
             CellState::IncorrectPosition => {
-                print!("{} {} {}", YELLOW, letter.to_ascii_uppercase(), RESET)
+                print!("{} {} {}", YELLOW, letter, RESET)
             }
-            CellState::Invalid => print!("{} {} {}", GRAY, letter.to_ascii_uppercase(), RESET),
+            CellState::Invalid => print!("{} {} {}", GRAY, letter, RESET),
             CellState::Empty => print!(" _ "),
         };
     }
@@ -90,16 +95,36 @@ impl Grid {
     }
 
     fn print_result(&self) {
-        println!("The word was: {}", &self.word.to_ascii_uppercase());
+        println!("The word was: {}", &self.word);
+    }
+
+    fn print_share(&self) {
+        for r in &self.rows {
+            for c in &r.cells {
+                let _ = Grid::print_emoji(&c.state);
+            }
+            println!()
+        }
+    }
+
+    fn print_emoji(state: &CellState) {
+        let emoji = match state {
+            CellState::CorrectPosition => "🟩",
+            CellState::IncorrectPosition => "🟨",
+            CellState::Invalid => "⬜",
+            CellState::Empty => "⬛️"
+        };
+        print!(" {} ", emoji)
     }
 }
 
 fn main() {
-    clear_screen();
-    let word_set: BTreeSet<String> = WORDS.lines().map(|w| w.to_ascii_lowercase()).collect();
+    let word_set: BTreeSet<String> = WORDS.lines().map(|w| w.to_ascii_uppercase()).collect();
     let random_word = random_word(&word_set);
+
+    clear_screen();
     // let random_word = "trade";
-    run(random_word.to_ascii_lowercase(), word_set);
+    run(random_word.to_string(), word_set);
 }
 
 fn run(word: String, word_set: BTreeSet<String>) {
@@ -144,28 +169,31 @@ fn run(word: String, word_set: BTreeSet<String>) {
         if g.check_state(row) {
             let text = match row {
                 0 => {"Genius!"}
-                1 => {"Magnificent"}
-                2 => {"Impressive"}
-                3 => {"Splendid"}
-                4 => {"Great"}
-                5 => {"Phew"}
-                _ => panic!("this can't happen")
+                1 => {"Magnificent!"}
+                2 => {"Impressive!"}
+                3 => {"Splendid!"}
+                4 => {"Great!"}
+                5 => {"Phew!"}
+                _ => panic!("This can't happen")
             };
+            println!();
             println!("{text}");
+            println!();
+            // g.print_share();
             exit(0);
         }
 
         row += 1;
     }
-
     g.print_result();
+    // g.print_share();
 }
 
-fn random_word(word_set: &BTreeSet<String>) -> &String {
+fn random_word(word_set: &BTreeSet<String>) -> String {
     let mut rng = rand::rng();
     let index = rng.random_range(0..word_set.len());
     let random_word = word_set.iter().nth(index).unwrap();
-    random_word
+    random_word.to_owned()
 }
 
 fn clear_screen() {
@@ -176,5 +204,7 @@ fn clear_screen() {
 fn read_line() -> String {
     let mut input = String::new();
     io::stdin().read_line(&mut input).unwrap();
-    input.trim().to_ascii_lowercase()
+    input.trim().to_ascii_uppercase()
 }
+
+

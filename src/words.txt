@@ -376,6 +376,7 @@ chill
 chime
 china
 chirp
+chive
 chock
 choir
 choke
