@@ -48,6 +48,7 @@ alarm
 album
 alert
 algae
+alias
 alibi
 alien
 align
@@ -910,6 +911,7 @@ greed
 green
 greet
 grief
+grift
 grill
 grime
 grimy
