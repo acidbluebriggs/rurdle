@@ -16,8 +16,7 @@ pub fn run(word: String, dictionary: &Dictionary) {
     game.render();
 
     for row in 0..ROWS {
-        println!();
-
+        println!("\nYour guess?");
         let input_string = read_line();
 
         match dictionary.validate(&input_string) {
