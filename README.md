@@ -2,6 +2,8 @@
 
 Very basic wordle clone for the terminal. 
 
+![rurdle.png](rurdle.png)
+
 ### Quick run:
 ```rust
 cargo run --bin rurdle
