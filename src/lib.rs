@@ -11,6 +11,7 @@ use std::thread::{sleep};
 use std::time::Duration;
 
 pub fn run(word: String, dictionary: &Dictionary) {
+    clear_screen();
     let mut game = Game::new(word.clone());
     game.render();
 

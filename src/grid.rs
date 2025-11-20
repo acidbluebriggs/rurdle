@@ -194,7 +194,6 @@ impl Game {
 
 impl Draw for Game {
     fn render(&self) {
-        clear_screen();
         self.grid.print_word_grid(&self.game_state);
         println!();
         self.keyboard.render();
