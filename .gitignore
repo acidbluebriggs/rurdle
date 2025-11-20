@@ -4,5 +4,4 @@ profile.cov
 .vscode
 .idea
 *.iml
-bin
 target
