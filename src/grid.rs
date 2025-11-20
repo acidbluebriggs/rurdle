@@ -178,7 +178,7 @@ impl Game {
     }
 
     pub fn print_share(&self) {
-        print!("{}", self.grid.share(&self.game_state))
+        print!("{}", self.grid.share(&self.game_state));
     }
 
     pub fn has_won(&self, index: usize) -> bool {

@@ -53,17 +53,19 @@ pub fn run(word: String, dictionary: &Dictionary) {
 
         if game.has_won(row) {
             let text = match row {
-                0 => {"Genius!"}
-                1 => {"Magnificent!"}
-                2 => {"Impressive!"}
-                3 => {"Splendid!"}
-                4 => {"Great!"}
-                5 => {"Phew!"}
-                _ => { "WAT?"}
+                0 => {("1/6", "Genius!")}
+                1 => {("2/6", "Magnificent!")}
+                2 => {("3/6", "Impressive!")}
+                3 => {("4/6", "Splendid!")}
+                4 => {("5/6", "Great!")}
+                5 => {("6/6", "Phew!")}
+                _ => {("?/?", "WAT?")}
             };
+
             clear_screen();
             game.render();
-            println!("\n{:^38}\n\n", text);
+            print!("\n{:^38}\n", text.1);
+            print!("{:^38}\n\n", text.0);
             game.print_share();
             exit(0);
         }
