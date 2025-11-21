@@ -13,9 +13,11 @@ use std::time::Duration;
 pub fn run(word: String, dictionary: &Dictionary) {
     clear_screen();
     let mut game = Game::new(word.clone());
+    let mut row = 0;
+
     game.render();
 
-    for row in 0..ROWS {
+    while row < ROWS {
         println!("\nYour guess?");
         let input_string = read_line();
 
@@ -70,6 +72,7 @@ pub fn run(word: String, dictionary: &Dictionary) {
         }
 
         game.render();
+        row += 1
     }
 
     game.grid.print_result(word);
@@ -80,4 +83,3 @@ pub fn read_line() -> String {
     io::stdin().read_line(&mut input).unwrap();
     input.trim().to_ascii_uppercase()
 }
-
