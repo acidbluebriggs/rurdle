@@ -97,7 +97,7 @@ impl Dictionary {
         }
     }
 
-    pub fn validate(&self, input_string: &String) -> Result<(), String> {
+    pub fn validate(&self, input_string: &str) -> Result<(), String> {
         if !self.words.contains(input_string) {
             return Err(format!("{} not in word list", input_string))
         }
