@@ -24,6 +24,27 @@ pub enum CellState {
     Empty,
 }
 
+
+impl CellState {
+    pub const fn emoji(&self) -> &'static str {
+        match self {
+            CellState::CorrectPosition => "🟩",
+            CellState::IncorrectPosition => "🟨",
+            CellState::Invalid => "⬜",
+            CellState::Empty => "⬛️",
+        }
+    }
+
+    pub const fn color(&self) -> &'static str {
+        match self {
+            CellState::CorrectPosition => GREEN,
+            CellState::IncorrectPosition => YELLOW,
+            CellState::Invalid => GRAY,
+            CellState::Empty => "",
+        }
+    }
+}
+
 pub struct Dictionary {
     words: BTreeSet<String>,
 }
@@ -43,7 +64,7 @@ pub struct Row {
 }
 
 #[derive(Default)]
-pub struct Grid {   
+pub struct Grid {
 }
 
 pub struct Game {
@@ -242,13 +263,7 @@ impl Grid {
     }
 
     pub fn emoji_for(state: &CellState) -> String {
-        let emoji = match state {
-            CellState::CorrectPosition => "🟩",
-            CellState::IncorrectPosition => "🟨",
-            CellState::Invalid => "⬜",
-            CellState::Empty => "⬛️",
-        };
-        format!("{}", emoji)
+        state.emoji().to_string()
     }
 }
 
@@ -258,12 +273,10 @@ pub fn clear_screen() {
 }
 
 fn format_char_with_state(letter: &str, state: &CellState, empty_display: &str) -> String {
-    match state {
-        CellState::CorrectPosition => format!("{} {} {}", GREEN, letter, RESET),
-        CellState::IncorrectPosition => format!("{} {} {}", YELLOW, letter, RESET),
-        CellState::Invalid => format!("{} {} {}", GRAY, letter, RESET),
-        CellState::Empty => empty_display.to_string(),
+    if *state == CellState::Empty {
+        return empty_display.to_string();
     }
+    format!("{} {} {}", state.color(), letter, RESET)
 }
 
 pub fn keyboard_char(letter: char, state: &CellState) -> String {
