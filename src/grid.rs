@@ -6,9 +6,6 @@ use rand::Rng;
 pub const ROWS: usize = 6;
 const CELLS: usize = 5;
 
-const GREEN: &str = "\x1b[42;90m";
-const YELLOW: &str = "\x1b[43;90m";
-const GRAY: &str = "\x1b[90m";
 const RESET: &str = "\x1b[0m";
 
 pub trait Draw {
@@ -24,23 +21,30 @@ pub enum CellState {
     Empty,
 }
 
+pub struct CellDisplay {
+    pub emoji: &'static str,
+    pub color: &'static str,
+}
 
 impl CellState {
-    pub const fn emoji(&self) -> &'static str {
+    pub const fn display(&self) -> CellDisplay {
         match self {
-            CellState::CorrectPosition => "🟩",
-            CellState::IncorrectPosition => "🟨",
-            CellState::Invalid => "⬜",
-            CellState::Empty => "⬛️",
-        }
-    }
-
-    pub const fn color(&self) -> &'static str {
-        match self {
-            CellState::CorrectPosition => GREEN,
-            CellState::IncorrectPosition => YELLOW,
-            CellState::Invalid => GRAY,
-            CellState::Empty => "",
+            CellState::CorrectPosition => CellDisplay {
+                emoji: "🟩",
+                color: "\x1b[42;90m"
+            },
+            CellState::IncorrectPosition => CellDisplay {
+                emoji: "🟨",
+                color: "\x1b[43;90m"
+            },
+            CellState::Invalid => CellDisplay {
+                emoji: "⬜",
+                color: "\x1b[90m"
+            },
+            CellState::Empty => CellDisplay {
+                emoji: "⬛️",
+                color: ""
+            },
         }
     }
 }
@@ -255,15 +259,11 @@ impl Grid {
         let mut result = String::new();
         for r in &game_state.rows {
             for c in &r.cells {
-                result.push_str(&Grid::emoji_for(&c.state));
+                result.push_str(c.state.display().emoji);
             }
             result.push('\n');
         }
         result
-    }
-
-    pub fn emoji_for(state: &CellState) -> String {
-        state.emoji().to_string()
     }
 }
 
@@ -276,7 +276,7 @@ fn format_char_with_state(letter: &str, state: &CellState, empty_display: &str) 
     if *state == CellState::Empty {
         return empty_display.to_string();
     }
-    format!("{} {} {}", state.color(), letter, RESET)
+    format!("{} {} {}", state.display().color, letter, RESET)
 }
 
 pub fn keyboard_char(letter: char, state: &CellState) -> String {
