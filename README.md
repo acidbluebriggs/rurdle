@@ -13,7 +13,7 @@ cargo run --bin rurdle
 ```shell
 cargo build --release
 ```
-### Executed with a test word for debugging
+### Execute with a test word for debugging
 ```shell
 cargo run --bin rurdle -- --debug hello
 ```
