@@ -2,12 +2,12 @@ pub mod grid;
 
 pub const WORDS: &str = include_str!("words.txt");
 
-pub use grid::{clear_screen};
+pub use grid::clear_screen;
 use grid::{CellState, ROWS};
-use grid::{Dictionary, Game, Draw};
+use grid::{Dictionary, Draw, Game};
 use std::io;
 use std::process::exit;
-use std::thread::{sleep};
+use std::thread::sleep;
 use std::time::Duration;
 
 pub fn run(word: String, dictionary: &Dictionary) {
@@ -43,8 +43,8 @@ pub fn run(word: String, dictionary: &Dictionary) {
                     word[col] = '_' as u8;
                     CellState::CorrectPosition
                 }
-                Some(index) => {
-                    word[index] = '_' as u8;
+                Some(_) => {
+                    word[col] = '_' as u8;
                     CellState::IncorrectPosition
                 }
                 None => CellState::Invalid,
