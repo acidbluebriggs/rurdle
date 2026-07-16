@@ -5,7 +5,7 @@ pub const WORDS: &str = include_str!("words.txt");
 pub use grid::clear_screen;
 use grid::{CellState, ROWS};
 use grid::{Dictionary, Draw, Game};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMaps};
 use std::io;
 use std::process::exit;
 use std::thread::sleep;
@@ -41,7 +41,7 @@ pub fn run(word: String, dictionary: &Dictionary) {
         }
 
         game.guessed.insert(input_string.clone());
-        
+
         let guess_word = input_string.as_bytes();
         let mut solution = game.word.as_bytes().to_vec();
         let mut counts: HashMap<u8, u8> = HashMap::new();
