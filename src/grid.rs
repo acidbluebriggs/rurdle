@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashSet};
 use std::io::{self, Write};
 use rand::Rng;
 
@@ -74,6 +74,7 @@ pub struct Grid {
 pub struct Game {
     pub word: String,
     pub grid: Grid,
+    pub guessed: HashSet<String>,
     pub keyboard: Keyboard,
     game_state: GameState,
 }
@@ -189,6 +190,7 @@ impl Game {
         Game {
             word,
             grid: Grid::default(),
+            guessed: HashSet::new(),
             keyboard: Keyboard::new(),
             game_state: GameState::new(),
         }
