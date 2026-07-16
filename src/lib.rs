@@ -5,6 +5,7 @@ pub const WORDS: &str = include_str!("words.txt");
 pub use grid::clear_screen;
 use grid::{CellState, ROWS};
 use grid::{Dictionary, Draw, Game};
+use std::collections::HashMap;
 use std::io;
 use std::process::exit;
 use std::thread::sleep;
@@ -22,45 +23,54 @@ pub fn run(word: String, dictionary: &Dictionary) {
         let input_string = read_line();
 
         match dictionary.validate(&input_string) {
-            Ok(()) => {},
+            Ok(()) => {}
             Err(s) => {
                 println!("{s}");
                 sleep(Duration::from_secs(1));
                 game.render();
                 continue;
-            },
+            }
         }
 
-        let mut word = game.word.as_bytes().to_vec();
-        let input = input_string.as_bytes();
+        let guess_word = input_string.as_bytes();
+        let mut solution = game.word.as_bytes().to_vec();
+        let mut counts: HashMap<u8, u8> = HashMap::new();
 
-        for col in 0..5 {
-            let current = input[col];
-            let state = match word.iter().position(|&x| x == current) {
-                Some(index) if index == col => {
-                    // masking the word as there may be duplicate letters...
-                    // yes, that needs a better description... AGAIN = _GAIN after the first match.
-                    word[col] = '_' as u8;
-                    CellState::CorrectPosition
+        word.as_bytes().iter().for_each(|c| {
+            counts.entry(*c).or_insert(0);
+            counts.entry(*c).and_modify(|e| *e += 1);
+        });
+
+        for col in (0..5).rev() {
+            let guess_letter = guess_word[col];
+            let state = if guess_letter == solution[col] {
+                solution[col] = '_' as u8;
+                counts.entry(guess_letter).and_modify(|e| *e -= 1);
+                CellState::CorrectPosition
+            } else {
+                match counts.get_mut(&guess_letter) {
+                    None => CellState::Invalid,
+                    Some(0) => CellState::Invalid,
+                    Some(count) => {
+                        *count -= 1;
+                        CellState::IncorrectPosition
+                    }
                 }
-                Some(_) => {
-                    word[col] = '_' as u8;
-                    CellState::IncorrectPosition
-                }
-                None => CellState::Invalid,
             };
-            game.update(row, col, state, (current as char).to_string());
+
+            let r = (guess_letter as char).to_string();
+            game.update(row, col, state, r);
         }
 
         if game.has_won(row) {
             let text = match row {
-                0 => {("1/6", "Genius!")}
-                1 => {("2/6", "Magnificent!")}
-                2 => {("3/6", "Impressive!")}
-                3 => {("4/6", "Splendid!")}
-                4 => {("5/6", "Great!")}
-                5 => {("6/6", "Phew!")}
-                _ => {("?/?", "WAT?")}
+                0 => ("1/6", "Genius!"),
+                1 => ("2/6", "Magnificent!"),
+                2 => ("3/6", "Impressive!"),
+                3 => ("4/6", "Splendid!"),
+                4 => ("5/6", "Great!"),
+                5 => ("6/6", "Phew!"),
+                _ => ("?/?", "WAT?"),
             };
 
             clear_screen();
