@@ -5,7 +5,7 @@ pub const WORDS: &str = include_str!("words.txt");
 pub use grid::clear_screen;
 use grid::{CellState, ROWS};
 use grid::{Dictionary, Draw, Game};
-use std::collections::{HashMaps};
+use std::collections::{HashMap};
 use std::io;
 use std::process::exit;
 use std::thread::sleep;
