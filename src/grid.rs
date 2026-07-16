@@ -1,5 +1,7 @@
 use std::collections::{BTreeSet, HashSet};
 use std::io::{self, Write};
+use std::thread::sleep;
+use std::time::Duration;
 use rand::Rng;
 
 
@@ -74,8 +76,8 @@ pub struct Grid {
 pub struct Game {
     pub word: String,
     pub grid: Grid,
-    pub guessed: HashSet<String>,
     pub keyboard: Keyboard,
+    dictionary: Dictionary,
     game_state: GameState,
 }
 
@@ -85,14 +87,17 @@ pub struct LetterState {
 
 pub struct GameState {
     pub rows: [Row; ROWS],
+    pub guessed: HashSet<String>,
 }
 
 impl GameState {
     fn new() -> Self {
         GameState {
             rows: std::array::from_fn(|_| Row::new()),
+            guessed: HashSet::new(),
         }
     }
+
 }
 
 impl Dictionary {
@@ -186,13 +191,13 @@ impl LetterState {
 }
 
 impl Game {
-    pub fn new(word: String) -> Game {
+    pub fn new(word: String, dictionary: Dictionary) -> Game {
         Game {
             word,
             grid: Grid::default(),
-            guessed: HashSet::new(),
             keyboard: Keyboard::new(),
             game_state: GameState::new(),
+            dictionary,
         }
     }
 
@@ -204,10 +209,17 @@ impl Game {
         self.keyboard.letter_state.set_state(c, state);
     }
 
+
     pub fn print_share(&self) {
         print!("{}", self.grid.share(&self.game_state));
     }
 
+    pub fn print_message(&self, s: String) {
+        println!("{s}");
+        sleep(Duration::from_secs(1));
+        self.render();
+    }
+    
     pub fn has_won(&self, index: usize) -> bool {
         let r = &self.game_state.rows[index];
         for c in &r.cells {
@@ -217,6 +229,25 @@ impl Game {
         }
         true
     }
+
+    pub fn validate(&mut self, word: &String) -> Result<(), String> {
+        self.has_guessed(word)?;
+        self.dictionary.validate(word)?;
+        self.add_guess(word.clone());
+        Ok(())
+    }
+
+    fn has_guessed(&self, word: &String) -> Result<(), String> {
+        if self.game_state.guessed.contains(word) {
+            return Err(format!("Have already guessed: {}", word))
+        }
+
+        Ok(())
+    }
+
+    fn add_guess(&mut self, word: String) {
+        self.game_state.guessed.insert(word);
+    }
 }
 
 impl Draw for Game {
@@ -225,6 +256,7 @@ impl Draw for Game {
         println!();
         self.keyboard.render();
         println!();
+        println!("\nYour guess?");
     }
 }
 

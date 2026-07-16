@@ -4,43 +4,27 @@ pub const WORDS: &str = include_str!("words.txt");
 
 pub use grid::clear_screen;
 use grid::{CellState, ROWS};
-use grid::{Dictionary, Draw, Game};
+use grid::{Draw, Game};
 use std::collections::{HashMap};
 use std::io;
 use std::process::exit;
-use std::thread::sleep;
-use std::time::Duration;
 
-pub fn run(word: String, dictionary: &Dictionary) {
+pub fn run(word: String, mut game: Game) {
     clear_screen();
-    let mut game = Game::new(word.clone());
     let mut row = 0;
 
     game.render();
 
     while row < ROWS {
-        println!("\nYour guess?");
         let input_string = read_line();
 
-
-        if game.guessed.contains(&input_string) {
-            println!("Already guessed: {}", input_string);
-            sleep(Duration::from_secs(1));
-            game.render();
-            continue;
-        }
-
-        match dictionary.validate(&input_string) {
+        match game.validate(&input_string) {
             Ok(()) => {}
             Err(s) => {
-                println!("{s}");
-                sleep(Duration::from_secs(1));
-                game.render();
+                game.print_message(s);
                 continue;
             }
         }
-
-        game.guessed.insert(input_string.clone());
 
         let guess_word = input_string.as_bytes();
         let mut solution = game.word.as_bytes().to_vec();
@@ -97,6 +81,8 @@ pub fn run(word: String, dictionary: &Dictionary) {
 
     game.grid.print_result(word);
 }
+
+
 
 pub fn read_line() -> String {
     let mut input = String::new();
