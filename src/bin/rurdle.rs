@@ -18,7 +18,7 @@ fn main() {
     let dictionary = Dictionary::new(word_set);
     let random_word = fetch_word(args, &dictionary);
     let game = Game::new(random_word.clone(), dictionary);
-    run(random_word, game);
+    run(game);
 }
 
 fn fetch_word(args: Args, dictionary: &Dictionary) -> String {

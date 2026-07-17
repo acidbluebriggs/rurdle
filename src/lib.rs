@@ -9,7 +9,7 @@ use std::collections::{HashMap};
 use std::io;
 use std::process::exit;
 
-pub fn run(word: String, mut game: Game) {
+pub fn run(mut game: Game) {
     clear_screen();
     let mut row = 0;
 
@@ -30,12 +30,12 @@ pub fn run(word: String, mut game: Game) {
         let mut solution = game.word.as_bytes().to_vec();
         let mut counts: HashMap<u8, u8> = HashMap::new();
 
-        word.as_bytes().iter().for_each(|c| {
+        game.word.as_bytes().iter().for_each(|c| {
             counts.entry(*c).or_insert(0);
             counts.entry(*c).and_modify(|e| *e += 1);
         });
 
-        for col in (0..5).rev() {
+        for col in 0..5 {
             let guess_letter = guess_word[col];
             let state = if guess_letter == solution[col] {
                 solution[col] = '_' as u8;
@@ -43,8 +43,7 @@ pub fn run(word: String, mut game: Game) {
                 CellState::CorrectPosition
             } else {
                 match counts.get_mut(&guess_letter) {
-                    None => CellState::Invalid,
-                    Some(0) => CellState::Invalid,
+                    None | Some(0) => CellState::Invalid,
                     Some(count) => {
                         *count -= 1;
                         CellState::IncorrectPosition
@@ -79,7 +78,7 @@ pub fn run(word: String, mut game: Game) {
         row += 1
     }
 
-    game.grid.print_result(word);
+    game.grid.print_result(game.word);
 }
 
 
